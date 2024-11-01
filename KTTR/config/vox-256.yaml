@@ -1,0 +1,98 @@
+common_params:
+  num_kp: 10  # 根据你的KPDetector定义
+  num_ref: 5  # 根据你的KPDetector定义
+  num_temporal: 5  # 根据你的KPDetector定义
+  num_channels: 3
+  estimate_jacobian: False
+  scale_range: [0.5, 1.0]  # 根据你的KPDetector定义的范围
+
+dataset_params:
+  root_dir: /mnt/bolin/Data/VoxCeleb/
+  id_sampling: True
+  pairs_list: None
+  augmentation_params:
+    flip_param:
+      horizontal_flip: True
+      time_flip: True
+    jitter_param:
+      brightness: 0.1
+      contrast: 0.1
+      saturation: 0.1
+      hue: 0.1
+
+model_params:
+  kp_detector_params:
+    block_expansion: 64
+    num_kp: 10
+    num_channels: 3
+    num_ref: 5
+    num_temporal: 5
+    scale_range: [0.5, 1.0]
+    max_features: 256
+    num_blocks: 3
+    temperature: 0.1
+  generator_params:
+    block_expansion: 64
+    max_features: 512
+    num_down_blocks: 2
+    num_bottleneck_blocks: 6
+    fusion_features: 16
+    num_fusion_blocks: 4
+    estimate_occlusion_map: True
+    dense_motion_params:
+      num_blocks: 4  ### 4 or 5
+      block_expansion: 64
+      max_features: 512  ####512 or 1024
+      num_down_blocks: 4
+      num_bottleneck_blocks: 4 ###4 or 6
+  discriminator_params:
+    scales: [1]
+    num_blocks: 4
+    block_expansion: 32
+    max_features: 512
+    sn: True
+  fusion_network_params:  # 新增融合网络参数
+    in_channels: 10  # 融合网络输入通道数，根据你的FusionNetwork定义
+    num_blocks: 3  # 残差块的数量，根据你的FusionNetwork定义
+
+train_params:
+  temperature: 0.1
+  num_epochs: 100 ######100
+  num_repeats: 50 ########30
+  epoch_milestones: [60, 90]
+  lr_generator: 2.0e-4
+  lr_discriminator: 2.0e-4
+  lr_temporaldiscriminator: 2.0e-4
+  lr_kp_detector: 2.0e-4
+  lr_fusion_network: 2.0e-4  # 融合网络学习率
+  lr_generator_fusion: 2.0e-4  # 用于融合帧生成器的学习率
+  batch_size: 16 ##########
+  scales: [1, 0.5, 0.25, 0.125]
+  checkpoint_freq: 10
+  loss_weights:
+    generator_gan: 1
+    discriminator_gan: 1
+    discriminator_temporal_gan: 1
+    feature_matching: [10, 10, 10, 10]
+    perceptual_initial: [10, 10, 10, 10, 10]
+    perceptual_final: [10, 10, 10, 10, 10]
+    optical_flow: 10
+    fusion_network_loss: 1  # 融合网络的损失权重
+    generator_fusion_loss: 1  # 用于融合帧生成器的损失权重
+
+reconstruction_params:
+  num_videos: 1000
+  format: '.mp4'
+
+animate_params:
+  num_pairs: 50
+  format: '.mp4'
+  normalization_params:
+    adapt_movement_scale: False
+    use_relative_movement: True
+    use_relative_jacobian: True
+
+visualizer_params:
+  kp_size: 5
+  draw_border: True
+  colormap: 'gist_rainbow'
