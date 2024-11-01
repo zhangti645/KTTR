@@ -16,6 +16,9 @@ To encode a sequence, please put testing sequence in ./testing_data/ file and ru
 ```
 python K-Means_Encoder.py
 ```
+we use a context-based feature encoding method that computes compact feature residuals relative to key-reference frames. This process involves calculating differences, quantizing the residuals, encoding them with signed zero-order exponential-Golomb coding, and compressing the binary codes using context-based arithmetic coding with Prediction by Partial Matching (PPM). The resulting bitstream is transmitted to the decoder for reconstruction. The Golomb coding process is illustrated in the following figure.
+![image](https://github.com/user-attachments/assets/a2bdf4db-0ba1-495a-a941-08e556de9510)
+
 After obtaining the bistream , please run
 ```
 python k-Means_Decoder.py
